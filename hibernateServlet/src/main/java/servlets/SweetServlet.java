@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import com.mysql.cj.log.Log;
 
 import entity.SweetsEntity;
 import hibernate.HibernateUtils;
@@ -41,21 +43,34 @@ public class SweetServlet extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<form action='' method='POST'>");
-		out.println("<label>Enter Product (Sweet) ID: " + "<input type='text' name='sweet-id'></input></label>");
-		out.println("<input type='submit'>Get Details</input>");
+		out.println("<label>Enter Sweet Name: <input type='text' name='sweet-name'></input></label><br></br>");
+		out.println("<label>Enter Sweet Price: <input type='text' name='sweet-price'></input></label><br></br>");
+		out.println("<input type='submit'></input><br></br>");
 		out.println("</form>");
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String sweetId = request.getParameter("robot-id");
 		PrintWriter out = response.getWriter();
-
-		SweetsEntity sweet = session.get(SweetsEntity.class, Long.parseLong(sweetId));
-		if (sweet != null) {
-			out.println("Found sweet: "+ sweet.getName());
-		} else {
-			out.println("No sweet found for id: " + sweetId);
-		}
+		String name = request.getParameter("sweet-name");
+		String price = request.getParameter("sweet-price");
+		SweetsEntity sweet = new SweetsEntity();
+//		sweet.setId((long) 3);
+		sweet.setName(name);
+		try{
+			float floatValue= Float.parseFloat(price);
+			sweet.setPrice(floatValue);
+			}
+			catch(NumberFormatException e){
+			System.out.println ("NumberFormatException occurred.");
+			System.out.println(price + " is not a valid number.");
+			}
+		Transaction transaction = session.beginTransaction();
+		session.save(sweet);
+	
+		transaction.commit();
+		session.close();
+		response.setContentType("text/html");
+		out.println("Sweet was created in table");
 	}
 
 }

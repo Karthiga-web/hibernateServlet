@@ -20,7 +20,7 @@ public class SweetsEntity {
 	private String name;
 
 	@Column(name = "price")
-	private Float price;
+	private int price;
 	/**
 	 * @return the id
 	 */
@@ -52,15 +52,15 @@ public class SweetsEntity {
 	/**
 	 * @return the price
 	 */
-	public Float getPrice() {
+	public float getPrice() {
 		return price;
 	}
 
 	/**
-	 * @param price the price to set
+	 * @param floatValue the price to set
 	 */
-	public void setPrice(Float price) {
-		this.price = price;
+	public void setPrice(float floatValue) {
+		this.price = floatValue;
 	}
 
 	@Override
